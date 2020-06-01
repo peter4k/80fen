@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+
 import Parse from 'parse/react-native';
 
 import { ContainerStyle, TextStyle, ColorStyle } from '../style';
@@ -9,15 +10,17 @@ import AuthContext from '../authContext';
 export default function App({ navigation }: any) {
 
   const [username, onChangeUsername] = React.useState("");
+  const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
+  const [password2, onChangePassword2] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
-
+  
   const setIsSignedIn = useContext(AuthContext);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={[ContainerStyle.containerBase, styles.container]}>
-        <Text style={[TextStyle.h1, TextStyle.bold, ColorStyle.primary, styles.title]}>登录</Text>
+        <Text style={[TextStyle.h1, TextStyle.bold, ColorStyle.primary, styles.title]}>注册新账户</Text>
         <View style={[{ marginBottom: 20 }, inputContainerStyle]}>
           <TextInput
             style={[{ height: 40, borderColor: 'gray' }]}
@@ -28,7 +31,17 @@ export default function App({ navigation }: any) {
             autoCompleteType="username"
           />
         </View>
-        <View style={inputContainerStyle}>
+        <View style={[{ marginBottom: 20 }, inputContainerStyle]}>
+          <TextInput
+            style={[{ height: 40, borderColor: 'gray' }]}
+            onChangeText={text => onChangeEmail(text)}
+            value={email}
+            placeholder="邮箱"
+            autoCapitalize="none"
+            autoCompleteType="email"
+          />
+        </View>
+        <View style={[{ marginBottom: 20 }, inputContainerStyle]}>
           <TextInput
             style={[{ height: 40, borderColor: 'gray' }]}
             onChangeText={text => onChangePassword(text)}
@@ -38,48 +51,76 @@ export default function App({ navigation }: any) {
             secureTextEntry={true}
           />
         </View>
+        <View style={inputContainerStyle}>
+          <TextInput
+            style={[{ height: 40, borderColor: 'gray' }]}
+            onChangeText={text => onChangePassword2(text)}
+            value={password2}
+            placeholder="确认密码"
+            autoCompleteType="password"
+            secureTextEntry={true}
+          />
+        </View>
         <TouchableOpacity
           style={[styles.loginButton, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainer, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
-          onPress={login}
+          onPress={signUp}
         >
           <View style={{ height: 40, justifyContent: 'center' }}>
-            <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>登录</Text>
+            <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>注册</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpContainer} onPress={() => navigation.navigate('signup')}>
-          <Text style={ColorStyle.demoted}>还没有账户？</Text>
-          <Text style={ColorStyle.primary}>注册</Text>
-          <Text style={ColorStyle.demoted}>新账户</Text>
+        <TouchableOpacity style={styles.signUpContainer} onPress={() => navigation.navigate('login')}>
+          <Text style={ColorStyle.demoted}>已有账户？</Text>
+          <Text style={ColorStyle.primary}>登录</Text>
         </TouchableOpacity>
         <LoadingOverlay show={isLoading} />
       </View>
     </TouchableWithoutFeedback>
   );
 
-  async function login() {
-    if (!password || !username) {
+  async function signUp() {
+    if (!verifyInput()) {
+      return;
+    }
+
+    let user = new Parse.User();
+    user.set("username", username);
+    user.set("password", password);
+    user.set("email", email);
+
+    try {
+      await user.signUp();
+      console.log("registration succes");
+      setIsSignedIn(true);
+    } catch (error) {
+
+      console.log(error.message)
+
+      //处理invalid token
+      if(error.code === 209){
+        Parse.User.logOut();
+        signUp();
+        return;
+      }
+
+      Alert.alert("出错了，请联系王总。错误码: " + error.code);
+    }
+
+    setIsLoading(false);
+  }
+
+  function verifyInput(): boolean {
+    if (!password || !password2 || !username || !email) {
       Alert.alert("请输入所有内容");
       return false;
     }
 
-    setIsLoading(true);
-
-    try {
-      await Parse.User.logIn(username, password);
-      console.log("login success");
-      setIsSignedIn(true);
-    } catch (error) {
-      if (error.code === 101) {
-        Alert.alert("用户名密码错误");
-      } else {
-        Alert.alert("出错了，请联系王总。错误码: " + error.code);
-      }
-
-      console.log(error.code, error.message);
+    if (password !== password2) {
+      Alert.alert("密码不匹配");
+      return false;
     }
 
-    
-    setIsLoading(false);
+    return true
   }
 }
 

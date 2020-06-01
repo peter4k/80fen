@@ -8,7 +8,19 @@ export default StyleSheet.create({
     primaryLite: {
         color: ThemeColors.primaryLite
     },
+    primaryExtraLite: {
+        color: ThemeColors.primaryLite
+    },
+    primaryDark: {
+        color: ThemeColors.primary
+    },
     white: {
         color: 'white'
+    },
+    greyExtraLight: {
+        color: ThemeColors.greyExtraLight
+    },
+    demoted: {
+        color: ThemeColors.demoted
     }
 });

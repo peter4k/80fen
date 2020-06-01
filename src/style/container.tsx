@@ -4,14 +4,24 @@ import { ThemeColors } from '../constant/color';
 export default StyleSheet.create({
     containerBase: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: ThemeColors.greyExtraLight,
         alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'stretch'
+        justifyContent: 'center'
+    },
+
+    paddingSmall: {
+        paddingVertical: 8,
+        paddingHorizontal: 16
     },
 
     padding: {
-        padding: 12
+        paddingVertical: 16,
+        paddingHorizontal: 24
+    },
+
+    paddingLarge: {
+        paddingVertical: 15,
+        paddingHorizontal: 30
     },
 
     roundedCorner: {
@@ -31,7 +41,13 @@ export default StyleSheet.create({
     backgroundWhite: {
         backgroundColor: "white",
     },
+    backgroundPrimary: {
+        backgroundColor: ThemeColors.primary
+    },
     backgroundPrimaryLite: {
         backgroundColor: ThemeColors.primaryLite
+    },
+    backgroundPrimaryExtraLite: {
+        backgroundColor: ThemeColors.primaryExtraLite
     }
 });
