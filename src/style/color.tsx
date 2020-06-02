@@ -9,13 +9,19 @@ export default StyleSheet.create({
         color: ThemeColors.primaryLite
     },
     primaryExtraLite: {
-        color: ThemeColors.primaryLite
+        color: ThemeColors.primaryExtraLite
     },
     primaryDark: {
         color: ThemeColors.primary
     },
     white: {
         color: 'white'
+    },
+    textColor: {
+        color: ThemeColors.textColor
+    },
+    textColorLight: {
+        color: ThemeColors.textColorLight
     },
     greyExtraLight: {
         color: ThemeColors.greyExtraLight

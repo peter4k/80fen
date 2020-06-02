@@ -319,6 +319,8 @@ export const ThemeColors = {
     primary: BaseColors.pink[500],
     primaryLite: BaseColors.pink[300],
     primaryExtraLite: BaseColors.pink[100],
+    textColor: BaseColors.grey[800],
+    textColorLight: BaseColors.grey[700],
     greyExtraLight: BaseColors.grey[50],
     demoted: BaseColors.grey[500]
 }

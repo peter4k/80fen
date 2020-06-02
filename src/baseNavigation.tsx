@@ -5,9 +5,9 @@ import Parse from 'parse/react-native';
 
 import AuthContext from './authContext';
 
-import Login from './views/login';
-import Signup from './views/signup';
-import MainMenu from './views/mainMenu';
+import Login from './views/login/login';
+import Signup from './views/login/signup';
+import MainMenu from './views/menu/mainMenu';
 
 const Stack = createStackNavigator();
 

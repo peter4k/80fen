@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import Parse from 'parse/react-native';
 
-import { ContainerStyle, TextStyle, ColorStyle } from '../style';
-import LoadingOverlay from './loadingOverlay';
-import AuthContext from '../authContext';
+import { ContainerStyle, TextStyle, ColorStyle } from '../../style';
+import LoadingOverlay from '../components/loadingOverlay';
+import AuthContext from '../../authContext';
 
 export default function App({ navigation }: any) {
 
@@ -39,7 +39,7 @@ export default function App({ navigation }: any) {
           />
         </View>
         <TouchableOpacity
-          style={[styles.loginButton, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainer, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
+          style={[styles.loginButton, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
           onPress={login}
         >
           <View style={{ height: 40, justifyContent: 'center' }}>
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   }
 });
 
-const inputContainerStyle = [ContainerStyle.shadowContainer, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner, styles.inputContainer];
+const inputContainerStyle = [ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner, styles.inputContainer];

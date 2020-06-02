@@ -34,7 +34,17 @@ export default StyleSheet.create({
             width: 0,
             height: 10
         },
-        shadowOpacity: .075,
+        shadowOpacity: .15,
+        shadowRadius: 15
+    },
+
+    shadowContainerLight: {
+        shadowColor: "black",
+        shadowOffset: {
+            width: 0,
+            height: 10
+        },
+        shadowOpacity: .05,
         shadowRadius: 15
     },
 

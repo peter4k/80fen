@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { MaterialIndicator } from 'react-native-indicators';
-import { ThemeColors } from '../constant/color';
+import { ThemeColors } from '../../constant/color';
 
 interface IProps {
     show: boolean;
