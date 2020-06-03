@@ -1,4 +1,5 @@
 import { StyleSheet} from 'react-native';
+import { BaseColors } from '../constant/color';
 
 export default StyleSheet.create({
     h1: {
@@ -9,6 +10,12 @@ export default StyleSheet.create({
     },
     h5: {
         fontSize: 18
+    },
+    sectionTitle: {
+      color: BaseColors.grey[700], 
+      marginTop: 30,
+      marginBottom: 12,
+      marginLeft:5
     },
     s1: {
         fontSize: 12

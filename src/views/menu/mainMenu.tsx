@@ -16,8 +16,8 @@ export default function MainMenu({ navigation }: any) {
   return (
     <View style={[ContainerStyle.containerBase, ContainerStyle.padding, styles.container]}>
       <UserView />
-      <Text style={[TextStyle.bold, TextStyle.h5, styles.sectionTitle]}>创建新游戏</Text>
-      <CreateGame />
+      <Text style={[TextStyle.bold, TextStyle.h5, TextStyle.sectionTitle]}>创建新游戏</Text>
+      <CreateGame navigation={navigation}/>
     </View>
   );
 }
@@ -27,11 +27,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     paddingTop: 60,
     alignItems: 'stretch'
-  },
-  sectionTitle: {
-    color: BaseColors.grey[700], 
-    marginTop: 30,
-    marginBottom: 12,
-    marginLeft:5
   }
 });

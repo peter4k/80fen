@@ -10,11 +10,12 @@ import AuthContext from '../../authContext';
 export default function App({ navigation }: any) {
 
   const [username, onChangeUsername] = React.useState("");
+  const [nickname, onChangeNickname] = React.useState("");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
   const [password2, onChangePassword2] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
-  
+
   const setIsSignedIn = useContext(AuthContext);
 
   return (
@@ -29,6 +30,14 @@ export default function App({ navigation }: any) {
             placeholder="用户名"
             autoCapitalize="none"
             autoCompleteType="username"
+          />
+        </View>
+        <View style={[{ marginBottom: 20 }, inputContainerStyle]}>
+          <TextInput
+            style={[{ height: 40, borderColor: 'gray' }]}
+            onChangeText={text => onChangeNickname(text)}
+            value={nickname}
+            placeholder="中文昵称"
           />
         </View>
         <View style={[{ marginBottom: 20 }, inputContainerStyle]}>
@@ -83,10 +92,14 @@ export default function App({ navigation }: any) {
       return;
     }
 
+    setIsLoading(true);
+
     let user = new Parse.User();
     user.set("username", username);
     user.set("password", password);
     user.set("email", email);
+    user.set("nickname", nickname);
+    user.set("color", assignColor());
 
     try {
       await user.signUp();
@@ -97,7 +110,7 @@ export default function App({ navigation }: any) {
       console.log(error.message)
 
       //处理invalid token
-      if(error.code === 209){
+      if (error.code === 209) {
         Parse.User.logOut();
         signUp();
         return;
@@ -120,7 +133,13 @@ export default function App({ navigation }: any) {
       return false;
     }
 
-    return true
+    return true;
+  }
+
+  function assignColor() {
+    const colors = ["red", "pink", "purple", "green", "indigo", "blue", "cyan", "teal", "lime", "yellow", "amber", "orange"]
+    const index = Math.floor(Math.random() * colors.length);
+    return colors[index];
   }
 }
 

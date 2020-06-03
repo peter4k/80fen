@@ -39,7 +39,7 @@ export default function App({ navigation }: any) {
           />
         </View>
         <TouchableOpacity
-          style={[styles.loginButton, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
+          style={[styles.loginButton, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
           onPress={login}
         >
           <View style={{ height: 40, justifyContent: 'center' }}>
@@ -78,7 +78,7 @@ export default function App({ navigation }: any) {
       console.log(error.code, error.message);
     }
 
-    
+
     setIsLoading(false);
   }
 }
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingLeft: 50,
-    paddingRight: 50
+    paddingRight: 50,
   },
   inputContainer: {
     alignSelf: 'stretch'

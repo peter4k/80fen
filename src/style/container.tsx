@@ -24,6 +24,10 @@ export default StyleSheet.create({
         paddingHorizontal: 30
     },
 
+    alignSelfStretch: {
+      alignSelf: 'stretch'
+    },
+
     roundedCorner: {
         borderRadius: 10
     },
@@ -35,7 +39,11 @@ export default StyleSheet.create({
             height: 10
         },
         shadowOpacity: .15,
-        shadowRadius: 15
+        shadowRadius: 15,
+        backgroundColor: 'white',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 10
     },
 
     shadowContainerLight: {
@@ -45,7 +53,11 @@ export default StyleSheet.create({
             height: 10
         },
         shadowOpacity: .05,
-        shadowRadius: 15
+        shadowRadius: 15,
+        backgroundColor: 'white',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 10
     },
 
     backgroundWhite: {
