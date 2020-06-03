@@ -45,7 +45,6 @@ export default StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 10
     },
-
     shadowContainerLight: {
         shadowColor: "black",
         shadowOffset: {
@@ -53,6 +52,19 @@ export default StyleSheet.create({
             height: 10
         },
         shadowOpacity: .05,
+        shadowRadius: 15,
+        backgroundColor: 'white',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 10
+    },
+    shadowContainerModal: {
+        shadowColor: "black",
+        shadowOffset: {
+            width: 0,
+            height: -10
+        },
+        shadowOpacity: .1,
         shadowRadius: 15,
         backgroundColor: 'white',
         paddingVertical: 8,
