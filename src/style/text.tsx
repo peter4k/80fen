@@ -5,6 +5,11 @@ export default StyleSheet.create({
     h1: {
         fontSize: 48
     },
+    h3: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: ThemeColors.textColor
+    },
     h4: {
         fontSize: 20,
         fontWeight: 'bold',

@@ -11,6 +11,7 @@ import { ContainerStyle, ColorStyle, TextStyle } from '../../style';
 import { BaseColors, ThemeColors } from '../../constant/color';
 import { } from 'react-native-safe-area-context';
 import LoadingOverlay from '../components/loadingOverlay';
+import FriendItem from '../components/friendItem';
 
 export default function CreateGame({ navigation }: any) {
 
@@ -35,7 +36,11 @@ export default function CreateGame({ navigation }: any) {
         </View>
         <Text style={[TextStyle.bold, TextStyle.h4, TextStyle.sectionTitle]}>添加朋友</Text>
         <View style={[styles.friendContainer, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.alignSelfStretch]}>
-          {selectedfriends.map((friend => renderFriend(friend)))}
+          {selectedfriends.map(friend =>
+            <TouchableOpacity key={friend.get("username")}>
+              <FriendItem friend={friend} />
+            </TouchableOpacity>
+            )}
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <View style={[styles.friendItem, { backgroundColor: BaseColors.grey[200] }]}>
               <AntDesign name="plus" size={30} color={ThemeColors.textColor} />
@@ -84,20 +89,6 @@ export default function CreateGame({ navigation }: any) {
     )
   }
 
-  function renderFriend(friend: Parse.User) {
-    const color: string = friend.get("color");
-    //@ts-ignore
-    const style = [styles.friendItem, { backgroundColor: BaseColors[color][500] }];
-
-    return (
-      <TouchableOpacity style={style} key={friend.get("username")}>
-        <Text style={[TextStyle.bold, TextStyle.h4, ColorStyle.white]}>
-          {friend.get("nickname")[0]}
-        </Text>
-      </TouchableOpacity>
-    )
-  }
-
   function renderUserModal() {
     return (
       <Modal
@@ -124,15 +115,10 @@ export default function CreateGame({ navigation }: any) {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    setSelectedFriends([...selectedfriends, friend])
-                    setModalVisible(false);
+                    setSelectedFriends([...selectedfriends, friend]);
                   }}
                   style={[ContainerStyle.shadowContainer, { marginVertical: 8, flexDirection: "row", alignItems: "center" }]} key={friend.get("username")}>
-                  <View style={style}>
-                    <Text style={[TextStyle.bold, TextStyle.h4, ColorStyle.white]}>
-                      {friend.get("nickname")[0]}
-                    </Text>
-                  </View>
+                  <FriendItem friend={friend} />
                   <Text style={[TextStyle.h4, ColorStyle.textColor, { marginLeft: 10 }]}>
                     {friend.get("nickname")}
                   </Text>
@@ -153,7 +139,7 @@ export default function CreateGame({ navigation }: any) {
   }
 
   async function createGame() {
-    if(selectedfriends.length < 5){
+    if (selectedfriends.length < 5) {
       Alert.alert("找朋友游戏需要至少5人");
       return;
     }
@@ -164,12 +150,22 @@ export default function CreateGame({ navigation }: any) {
     const Game = Parse.Object.extend("Game");
     const game = new Game();
     game.set("levelUpScore", levelUpScore);
+    const relation = game.relation("participants");
 
+    const GameRow = Parse.Object.extend("GameRow");
+    const firstRow = new GameRow();
+    const data: {[key: string]: number} = {};
     // link user to game
-    for(const friend of friends) {
-      const relation = game.relation("participants");
+    for (const friend of friends) {
       relation.add(friend);
+      data[friend.id] = 2;
     }
+
+    firstRow.set("data", data);
+    await firstRow.save();
+
+    const rowRelation = game.relation("row");
+    rowRelation.add(firstRow);
 
     await game.save();
 

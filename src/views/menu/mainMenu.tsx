@@ -11,6 +11,7 @@ import LoadingOverlay from '../components/loadingOverlay';
 
 import UserView from './user'
 import CreateGame from './createGame';
+import Games from './games';
 
 export default function MainMenu({ navigation }: any) {
   return (
@@ -18,6 +19,7 @@ export default function MainMenu({ navigation }: any) {
       <UserView />
       <Text style={[TextStyle.bold, TextStyle.h5, TextStyle.sectionTitle]}>创建新游戏</Text>
       <CreateGame navigation={navigation}/>
+      <Games navigation={navigation}/>
     </View>
   );
 }
