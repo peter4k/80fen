@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import { ContainerStyle, TextStyle } from '../../style';
+import { ContainerStyle, TextStyle, ColorStyle } from '../../style';
 import { ThemeColors } from '../../constant/color';
 import FriendItem from '../components/friendItem';
 
@@ -23,6 +24,15 @@ export default function Game({ route, navigation }: any) {
             {participants.map(participant => renderHeaderRow(participant))}
           </View>
           {renderRows()}
+          {renderRows()}
+        </View>
+        <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
+          <TouchableOpacity
+            style={[{ width: 200, marginTop: 25, alignItems: 'center' }, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.roundedCorner]}
+            onPress={() => navigation.navigate("newgamerow", { game })}
+          >
+            <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>开始新的一局</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -57,14 +67,28 @@ export default function Game({ route, navigation }: any) {
 
       return (
         <View key={row.id}>
-          {participants.map(participant => {
-            const rowData = data[participant.id];
-            return (
-              <View style={styles.rowItem} key={participant.id}>
-                <Text style={TextStyle.h4}>{rowData}</Text>
-              </View>
-            );
-          })}
+          <View>
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.15)', 'transparent']}
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: 1
+              }}
+            />
+            <View style={{ paddingHorizontal: 25 }}>
+              {participants.map(participant => {
+                const rowData = data[participant.id];
+                return (
+                  <View style={styles.rowItem} key={participant.id}>
+                    <Text style={TextStyle.h4}>{rowData}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
         </View>
       );
     });
@@ -95,7 +119,6 @@ const styles = StyleSheet.create({
   rowItem: {
     marginTop: 25,
     height: 50,
-    justifyContent: 'center',
-    marginRight: 15
+    justifyContent: 'center'
   }
 })

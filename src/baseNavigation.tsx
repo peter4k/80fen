@@ -10,6 +10,7 @@ import Signup from './views/login/signup';
 import MainMenu from './views/menu/mainMenu';
 import CreateGame from './views/createGame/createGame';
 import Game from './views/game/game';
+import NewGameRow from './views/game/newGameRow';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
                                 <Stack.Screen name="mainmenu" component={MainMenu} options={{ headerShown: false }} />
                                 <Stack.Screen name="createGame" component={CreateGame} options={{ headerShown: false }} />
                                 <Stack.Screen name="game" component={Game} options={{ headerShown: false }} />
+                                <Stack.Screen name="newgamerow" component={NewGameRow} options={{ headerShown: false }} />
                             </>
                             :
                             <>
