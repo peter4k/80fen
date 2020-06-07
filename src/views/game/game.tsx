@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,12 +11,16 @@ import GameRows from './gameRows';
 export default function Game({ route, navigation }: any) {
 
   const game = route.params.game;
+  const rowsRef: any = useRef();
+  if (rowsRef.current) {
+    rowsRef.current.load();
+  }
 
   return (
     <SafeAreaView style={ContainerStyle.containerBase}>
       <View style={[styles.container, ContainerStyle.padding]}>
         {renderHeader()}
-        <GameRows game={game} />
+        <GameRows game={game} ref={rowsRef} />
         <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
           <TouchableOpacity
             style={[{ width: 200, marginTop: 25, alignItems: 'center' }, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.roundedCorner]}

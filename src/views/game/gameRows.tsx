@@ -1,14 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useImperativeHandle, forwardRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import FriendItem from '../components/friendItem';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TextStyle } from '../../style';
+import Level from '../components/level';
 
-export default function GameRows({ game }: any) {
+export default forwardRef(({ game }: any, ref) => {
   const [rows, setRows] = React.useState<Parse.Object[]>([]);
   const [participants, setParticipants] = React.useState<Parse.User[]>([]);
 
   useEffect(() => { loadData() }, []);
+
+  useImperativeHandle(ref, () => ({
+    load() {
+      loadData();
+    }
+  }));
 
   async function loadData() {
     const relation = game.relation("participants");
@@ -23,8 +30,9 @@ export default function GameRows({ game }: any) {
       <View>
         {participants.map(participant => renderHeaderRow(participant))}
       </View>
-      {renderRows()}
-      {renderRows()}
+      <View style={{ flexDirection: "row-reverse" }}>
+        {renderRows()}
+      </View>
     </View>
   )
 
@@ -40,29 +48,30 @@ export default function GameRows({ game }: any) {
   }
 
   function renderRows() {
-    return rows.map(row => {
+    return rows.map((row, index) => {
 
       const data = row.get("data");
 
       return (
         <View key={row.id}>
           <View>
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.15)', 'transparent']}
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                bottom: 0,
-                width: 1
-              }}
-            />
+            {index === 0 ? undefined :
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.038)', 'rgba(0,0,0,0.05)', 'rgba(0,0,0,0.038)', 'transparent']}
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 1
+                }}
+              />}
             <View style={{ paddingHorizontal: 25 }}>
               {participants.map(participant => {
                 const rowData = data[participant.id];
                 return (
                   <View style={styles.rowItem} key={participant.id}>
-                    <Text style={TextStyle.h4}>{rowData}</Text>
+                    <Level level={rowData}/>
                   </View>
                 );
               })}
@@ -72,8 +81,7 @@ export default function GameRows({ game }: any) {
       );
     });
   }
-}
-
+});
 
 const styles = StyleSheet.create({
   container: {

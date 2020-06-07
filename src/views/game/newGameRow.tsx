@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView } from 'react-native';
-import { ContainerStyle, TextStyle } from '../../style';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView, Alert } from 'react-native';
+import { ContainerStyle, TextStyle, ColorStyle } from '../../style';
 import Timer from './timer';
 import FriendItem from '../components/friendItem';
 import { ThemeColors } from '../../constant/color';
 import GameRows from './gameRows';
+import Parse from 'parse/react-native';
+import Level from '../components/level';
 
 export default function NewGameRow({ route, navigation }: any) {
 
@@ -14,9 +16,10 @@ export default function NewGameRow({ route, navigation }: any) {
 
   const [count, setCount] = React.useState(0);
   const [reBanker, setReBanker] = React.useState(false);
-  const [bankerId, setBankerId] = React.useState("");
+  const [bankerId, setBankerId] = React.useState(game.get("bankerId"));
   const [friendId, setFriend] = React.useState("");
-  const [score, setScore] = React.useState("");
+  const [nextBankerId, setNextBankerId] = React.useState("");
+  const [score, setScore] = React.useState("0");
   const relation = game.relation("row");
 
   useEffect(() => {
@@ -52,7 +55,7 @@ export default function NewGameRow({ route, navigation }: any) {
           {renderLevel()}
           {renderSelectFriend()}
           <Text style={[TextStyle.sectionTitle]}>庄下分数</Text>
-          <View style={[ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner]}>
+          <View style={[{ width: 100 }, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner]}>
             <TextInput
               style={[{ height: 40, borderColor: 'gray' }]}
               onChangeText={text => setScore(text)}
@@ -60,6 +63,21 @@ export default function NewGameRow({ route, navigation }: any) {
               placeholder="分数"
               keyboardType="number-pad"
             />
+          </View>
+          {renderSelectNextBanker()}
+          <View style={{ alignSelf: 'stretch', alignItems: "flex-start", flexDirection: "row", marginVertical: 30 }}>
+            <TouchableOpacity
+              style={[{ width: 200, marginTop: 25, alignItems: 'center' }, ContainerStyle.shadowContainer, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimary, ContainerStyle.padding, ContainerStyle.roundedCorner]}
+              onPress={onFinish}
+            >
+              <Text style={[ColorStyle.white, TextStyle.h5, TextStyle.bold]}>结束这一局</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[{ width: 200, marginTop: 25, alignItems: 'center', marginLeft: 15 }, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.roundedCorner]}
+              onPress={() => navigation.navigate("game", { game })}
+            >
+              <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>取消</Text>
+            </TouchableOpacity>
           </View>
           <Text style={[TextStyle.sectionTitle]}>历史等级</Text>
           <GameRows game={game} />
@@ -116,15 +134,46 @@ export default function NewGameRow({ route, navigation }: any) {
         <Text style={[TextStyle.sectionTitle]}>选择朋友</Text>
         <View style={{ flexDirection: 'row' }}>
           {participants.map((participant: Parse.User) => {
-            if (participant.id === bankerId) {
+            const isSelected = friendId === participant.id;
+            return (
+              <TouchableOpacity key={participant.id}
+                onPress={() => (
+                  isSelected
+                    ? setFriend("")
+                    : setFriend(participant.id)
+                )}>
+                <FriendItem friend={participant} />
+                {isSelected
+                  ? undefined :
+                  <View style={styles.friendOverlay}></View>}
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+      </View>
+    );
+  }
+
+  function renderSelectNextBanker() {
+    let scoreInt = parseInt(score);
+    if (isNaN(scoreInt) || scoreInt < 80) {
+      return undefined;
+    }
+
+    return (
+      <View>
+        <Text style={[TextStyle.sectionTitle]}>选择下一庄家</Text>
+        <View style={{ flexDirection: 'row' }}>
+          {participants.map((participant: Parse.User) => {
+            if (participant.id === bankerId || participant.id === friendId) {
               return undefined;
             }
 
             return (
               <TouchableOpacity key={participant.id}
-                onPress={() => setFriend(participant.id)}>
+                onPress={() => setNextBankerId(participant.id)}>
                 <FriendItem friend={participant} />
-                {friendId === participant.id
+                {nextBankerId === participant.id
                   ? undefined :
                   <View style={styles.friendOverlay}></View>}
               </TouchableOpacity>
@@ -150,7 +199,9 @@ export default function NewGameRow({ route, navigation }: any) {
             return (
               <View key={participant.id} style={{ alignItems: 'center' }}>
                 <FriendItem friend={participant} />
-                <Text style={[{ marginTop: 15 }, TextStyle.h4]}>{data[participant.id]}</Text>
+                <View style={{ marginTop: 15 }}>
+                  <Level level={data[participant.id]}/>
+                </View>
                 {bankerId === participant.id
                   ? undefined :
                   <View style={styles.friendOverlay}></View>}
@@ -160,6 +211,61 @@ export default function NewGameRow({ route, navigation }: any) {
         </View>
       </View>
     );
+  }
+
+  async function onFinish() {
+    const scoreInt = parseInt(score);
+    const levelUpScore = game.get("levelUpScore");
+    let levelUp = 0;
+    if (isNaN(scoreInt)) {
+      Alert.alert("请输入分数");
+      return;
+    }
+
+    let levelUpPpl = [bankerId];
+    if (friendId) levelUpPpl.push(friendId);
+
+    if (scoreInt >= 80) {
+      if (!nextBankerId) {
+        Alert.alert("请选择下一个庄家");
+        return;
+      }
+
+      levelUpPpl = participants.map(participant => participant.id).filter(id => levelUpPpl.indexOf(id) === -1);
+      levelUp = Math.floor((scoreInt - 80) / levelUpScore);
+      game.set("bankerId", friendId);
+    } else {
+      levelUp = Math.ceil((80 - scoreInt) / levelUpScore);
+      if (scoreInt === 0) levelUp = levelUp + 1;
+      game.set("bankerId", nextBankerId);
+    }
+
+    if (lastRow) {
+      lastRow.set("bankerId", bankerId);
+      await lastRow.save();
+    }
+
+    const GameRow = Parse.Object.extend("GameRow");
+    const gameRow = new GameRow();
+    gameRow.set("index", count + 1);
+    const data = lastRow ? lastRow.get("data") : {};
+    const newData: any = {};
+    for (const participant of participants) {
+      const currLevel = data[participant.id] || 2;
+      let nextLevel = currLevel;
+      if (levelUpPpl.includes(participant.id)) nextLevel += levelUp;
+      if(nextLevel > 14) nextLevel = nextLevel - 13;
+      newData[participant.id] = nextLevel;
+    }
+
+    gameRow.set("data", newData);
+
+    await gameRow.save();
+    const relation = game.relation("row");
+    relation.add(gameRow);
+
+    await game.save();
+    navigation.navigate("game", { game });
   }
 }
 

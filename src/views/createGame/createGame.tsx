@@ -155,13 +155,15 @@ export default function CreateGame({ navigation }: any) {
     const GameRow = Parse.Object.extend("GameRow");
     const firstRow = new GameRow();
     const data: {[key: string]: number} = {};
+
     // link user to game
-    for (const friend of friends) {
+    for (const friend of selectedfriends) {
       relation.add(friend);
       data[friend.id] = 2;
     }
 
     firstRow.set("data", data);
+    firstRow.set("index", 1);
     await firstRow.save();
 
     const rowRelation = game.relation("row");
