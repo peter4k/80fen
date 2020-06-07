@@ -5,19 +5,21 @@ import { BaseColors } from '../../constant/color';
 
 interface IFriendItemProps {
   friend: Parse.User;
+  key?: string;
 }
 
 export default function FriendItem(props: IFriendItemProps) {
 
-  const color: string = props.friend.get("color");
+  const { friend, key } = props;
+  const color: string = friend.get("color");
   //@ts-ignore
   let colorStyle = BaseColors[color];
   colorStyle = colorStyle || BaseColors['grey'];
-  const style = [styles.container, {backgroundColor: colorStyle[500]}];
+  const style = [styles.container, { backgroundColor: colorStyle[500] }];
   return (
-    <View style={style}>
+    <View style={style} key={key}>
       <Text style={[TextStyle.bold, TextStyle.h4, ColorStyle.white]}>
-        {props.friend.get("nickname")[0]}
+        {friend.get("nickname")[0]}
       </Text>
     </View>
   )
