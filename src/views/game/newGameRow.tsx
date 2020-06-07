@@ -31,10 +31,9 @@ export default function NewGameRow({ route, navigation }: any) {
       const relation = game.relation("participants");
       const participants = await relation.query().find();
       setParticipants(participants);
-      if (participants.length > 0) setBankerId(participants[0].id);
     })();
     (async function () {
-      const rows = await game.relation("row").query().descending().limit(1).find();
+      const rows = await game.relation("row").query().descending("createdAt").limit(1).find();
       if (rows[0]) {
         setLastRow(rows[0]);
       }
@@ -200,7 +199,7 @@ export default function NewGameRow({ route, navigation }: any) {
               <View key={participant.id} style={{ alignItems: 'center' }}>
                 <FriendItem friend={participant} />
                 <View style={{ marginTop: 15 }}>
-                  <Level level={data[participant.id]}/>
+                  <Level level={data[participant.id]} />
                 </View>
                 {bankerId === participant.id
                   ? undefined :
@@ -221,6 +220,10 @@ export default function NewGameRow({ route, navigation }: any) {
       Alert.alert("请输入分数");
       return;
     }
+    if (!friendId) {
+      Alert.alert("请选择朋友");
+      return;
+    }
 
     let levelUpPpl = [bankerId];
     if (friendId) levelUpPpl.push(friendId);
@@ -233,11 +236,11 @@ export default function NewGameRow({ route, navigation }: any) {
 
       levelUpPpl = participants.map(participant => participant.id).filter(id => levelUpPpl.indexOf(id) === -1);
       levelUp = Math.floor((scoreInt - 80) / levelUpScore);
-      game.set("bankerId", friendId);
+      game.set("bankerId", nextBankerId);
     } else {
       levelUp = Math.ceil((80 - scoreInt) / levelUpScore);
       if (scoreInt === 0) levelUp = levelUp + 1;
-      game.set("bankerId", nextBankerId);
+      game.set("bankerId", friendId);
     }
 
     if (lastRow) {
@@ -254,7 +257,7 @@ export default function NewGameRow({ route, navigation }: any) {
       const currLevel = data[participant.id] || 2;
       let nextLevel = currLevel;
       if (levelUpPpl.includes(participant.id)) nextLevel += levelUp;
-      if(nextLevel > 14) nextLevel = nextLevel - 13;
+      if (nextLevel > 14) nextLevel = nextLevel - 13;
       newData[participant.id] = nextLevel;
     }
 
