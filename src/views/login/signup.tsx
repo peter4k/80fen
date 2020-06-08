@@ -71,7 +71,7 @@ export default function App({ navigation }: any) {
           />
         </View>
         <TouchableOpacity
-          style={[styles.loginButton, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
+          style={[styles.loginButton, ContainerStyle.shadowContainerLight, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.paddingSmall, ContainerStyle.roundedCorner]}
           onPress={signUp}
         >
           <View style={{ height: 40, justifyContent: 'center' }}>

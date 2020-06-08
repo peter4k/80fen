@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "80fen2",
-    "slug": "80fen2",
+    "name": "80fen",
+    "slug": "80fen",
     "platforms": [
       "ios",
       "android",
@@ -23,6 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": ""
   }
 }

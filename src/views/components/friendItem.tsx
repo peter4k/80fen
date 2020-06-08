@@ -27,9 +27,9 @@ export default function FriendItem(props: IFriendItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     margin: 5

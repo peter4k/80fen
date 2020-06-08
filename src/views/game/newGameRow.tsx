@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView, Alert } from 'react-native';
 import { ContainerStyle, TextStyle, ColorStyle } from '../../style';
 import Timer from './timer';
@@ -22,6 +22,8 @@ export default function NewGameRow({ route, navigation }: any) {
   const [score, setScore] = React.useState("0");
   const relation = game.relation("row");
 
+  const timerRef: any = useRef();
+
   useEffect(() => {
     (async function () {
       const count = await relation.query().count();
@@ -42,63 +44,61 @@ export default function NewGameRow({ route, navigation }: any) {
 
   return (
     <SafeAreaView style={{ backgroundColor: ThemeColors.greyExtraLight, flex: 1 }}>
-      <View style={ContainerStyle.padding}>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={[TextStyle.h3]}>
-            第{count}局游戏 · <Timer />
-          </Text>
-        </View>
-        <ScrollView>
-          {renderGetBankerSelect()}
-          {reBanker ? renderSelectBanker() : undefined}
-          {renderLevel()}
-          {renderSelectFriend()}
-          <Text style={[TextStyle.sectionTitle]}>庄下分数</Text>
-          <View style={[{ width: 100 }, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner]}>
-            <TextInput
-              style={[{ height: 40, borderColor: 'gray' }]}
-              onChangeText={text => setScore(text)}
-              value={score}
-              placeholder="分数"
-              keyboardType="number-pad"
-            />
-          </View>
-          {renderSelectNextBanker()}
-          <View style={{ alignSelf: 'stretch', alignItems: "flex-start", flexDirection: "row", marginVertical: 30 }}>
-            <TouchableOpacity
-              style={[{ width: 200, marginTop: 25, alignItems: 'center' }, ContainerStyle.shadowContainer, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimary, ContainerStyle.padding, ContainerStyle.roundedCorner]}
-              onPress={onFinish}
-            >
-              <Text style={[ColorStyle.white, TextStyle.h5, TextStyle.bold]}>结束这一局</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[{ width: 200, marginTop: 25, alignItems: 'center', marginLeft: 15 }, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.roundedCorner]}
-              onPress={() => navigation.navigate("game", { game })}
-            >
-              <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>取消</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={[TextStyle.sectionTitle]}>历史等级</Text>
-          <GameRows game={game} />
-        </ScrollView>
+      <View style={[{ flexDirection: 'row', zIndex: 10, backgroundColor: ThemeColors.greyExtraLight }, ContainerStyle.padding]}>
+        <Text style={[TextStyle.h3]}>
+          第{count}局游戏 · <Timer ref={timerRef} />
+        </Text>
       </View>
+      <ScrollView style={[{ paddingTop: 0 }, ContainerStyle.padding]}>
+        {renderGetBankerSelect()}
+        {reBanker ? renderSelectBanker() : undefined}
+        {renderLevel()}
+        {renderSelectFriend()}
+        <Text style={[TextStyle.sectionTitle]}>庄下分数</Text>
+        <View style={[{ width: 100 }, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner]}>
+          <TextInput
+            style={[{ height: 40, borderColor: 'gray' }]}
+            onChangeText={text => setScore(text)}
+            value={score}
+            placeholder="分数"
+            keyboardType="number-pad"
+          />
+        </View>
+        {renderSelectNextBanker()}
+        <View style={{ alignSelf: 'stretch', alignItems: "flex-start", flexDirection: "row", marginVertical: 30 }}>
+          <TouchableOpacity
+            style={[{ marginTop: 25, alignItems: 'center' }, ContainerStyle.shadowContainer, ContainerStyle.shadowContainerLight, ContainerStyle.backgroundPrimary, ContainerStyle.padding, ContainerStyle.roundedCorner]}
+            onPress={onFinish}
+          >
+            <Text style={[ColorStyle.white, TextStyle.h5, TextStyle.bold]}>结束这一局</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[{ marginTop: 25, alignItems: 'center', marginLeft: 15 }, ContainerStyle.shadowContainer, ContainerStyle.backgroundPrimaryExtraLite, ContainerStyle.shadowContainerLight, ContainerStyle.padding, ContainerStyle.roundedCorner]}
+            onPress={() => navigation.navigate("game", { game })}
+          >
+            <Text style={[ColorStyle.primary, TextStyle.h5, TextStyle.bold]}>取消</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={[TextStyle.sectionTitle]}>历史等级</Text>
+        <GameRows game={game} />
+      </ScrollView>
     </SafeAreaView>
   )
 
   function renderGetBankerSelect() {
     const buttonBaseStyle = [ContainerStyle.padding, ContainerStyle.roundedCorner]
     return (
-      <View>
-        <Text style={[TextStyle.sectionTitle]}>抢庄</Text>
-        <View style={[ContainerStyle.roundedCorner, ContainerStyle.shadowContainer, styles.bankerSelectorContainer]}>
+      <View style={{ overflow: 'visible' }}>
+        <Text style={[TextStyle.sectionTitle, { marginTop: 10 }]}>抢庄</Text>
+        <View style={[ContainerStyle.roundedCorner, ContainerStyle.shadowContainerLight, styles.bankerSelectorContainer]}>
           <TouchableWithoutFeedback onPress={() => setReBanker(false)}>
             <View style={[...buttonBaseStyle, reBanker ? {} : ContainerStyle.backgroundPrimary]}>
-              <Text style={[TextStyle.h4, reBanker ? {} : { color: 'white' }]}>不抢庄</Text>
+              <Text style={[TextStyle.h5, reBanker ? {} : { color: 'white' }]}>不抢庄</Text>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => setReBanker(true)}>
             <View style={[...buttonBaseStyle, reBanker ? ContainerStyle.backgroundPrimary : {}]}>
-              <Text style={[TextStyle.h4, reBanker ? { color: 'white' } : {}]}>重新抢庄</Text>
+              <Text style={[TextStyle.h5, reBanker ? { color: 'white' } : {}]}>重新抢庄</Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -185,13 +185,17 @@ export default function NewGameRow({ route, navigation }: any) {
 
   function renderLevel() {
     if (!lastRow) {
-      return undefined;
+      return (
+        <View style={{ height: 155 }}>
+          <Text style={[TextStyle.sectionTitle]}>当前等级</Text>
+        </View>
+      );
     }
 
     const data = lastRow.get('data');
 
     return (
-      <View>
+      <View style={{ height: 155 }}>
         <Text style={[TextStyle.sectionTitle]}>当前等级</Text>
         <View style={{ flexDirection: 'row' }}>
           {participants.map((participant: Parse.User) => {
@@ -221,7 +225,7 @@ export default function NewGameRow({ route, navigation }: any) {
       return;
     }
     if (!friendId) {
-      Alert.alert("请选择朋友");
+      Alert.alert("请选择朋友，如果是庄家自己打就选庄家自己 :)");
       return;
     }
 
@@ -245,6 +249,11 @@ export default function NewGameRow({ route, navigation }: any) {
 
     if (lastRow) {
       lastRow.set("bankerId", bankerId);
+      if (timerRef.current) {
+        const time = timerRef.current.getTime();
+        lastRow.set("time", time);
+      }
+
       await lastRow.save();
     }
 
@@ -252,16 +261,26 @@ export default function NewGameRow({ route, navigation }: any) {
     const gameRow = new GameRow();
     gameRow.set("index", count + 1);
     const data = lastRow ? lastRow.get("data") : {};
+    let roundData = lastRow ? lastRow.get("roundData") : {};
+    roundData = roundData || {};
     const newData: any = {};
+    const newRoundData: any = {};
     for (const participant of participants) {
       const currLevel = data[participant.id] || 2;
+      const currRound = roundData[participant.id] || 1;
       let nextLevel = currLevel;
+      let nextRound = currRound;
       if (levelUpPpl.includes(participant.id)) nextLevel += levelUp;
-      if (nextLevel > 14) nextLevel = nextLevel - 13;
+      if (nextLevel > 14) {
+        nextLevel = nextLevel - 13;
+        nextRound ++;
+      }
       newData[participant.id] = nextLevel;
+      newRoundData[participant.id] = nextRound;
     }
 
     gameRow.set("data", newData);
+    gameRow.set("roundData", newRoundData);
 
     await gameRow.save();
     const relation = game.relation("row");
@@ -286,6 +305,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: ThemeColors.greyExtraLight,
-    opacity: 0.75
+    opacity: 0.65
   }
 })

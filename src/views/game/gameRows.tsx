@@ -1,5 +1,5 @@
-import React, { useEffect, useImperativeHandle, forwardRef } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React, { useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import FriendItem from '../components/friendItem';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TextStyle } from '../../style';
@@ -8,8 +8,16 @@ import Level from '../components/level';
 export default forwardRef(({ game }: any, ref) => {
   const [rows, setRows] = React.useState<Parse.Object[]>([]);
   const [participants, setParticipants] = React.useState<Parse.User[]>([]);
+  const [shouldScrollToEnd, setShouldScrollToEnd] = React.useState(false);
+
+  const scrollViewRef: any = useRef();
 
   useEffect(() => { loadData() }, []);
+  useEffect(() => {
+    if(shouldScrollToEnd && scrollViewRef.current){
+      scrollViewRef.current.scrollToEnd({animated: false});
+      setShouldScrollToEnd(false);
+    }});
 
   useImperativeHandle(ref, () => ({
     load() {
@@ -23,6 +31,7 @@ export default forwardRef(({ game }: any, ref) => {
     const rows = await game.relation("row").query().descending("createdAt").limit(50).find();
     setParticipants(participants);
     setRows(rows);
+    setShouldScrollToEnd(true);
   }
 
   return (
@@ -30,9 +39,11 @@ export default forwardRef(({ game }: any, ref) => {
       <View>
         {participants.map(participant => renderHeaderRow(participant))}
       </View>
-      <View style={{ flexDirection: "row-reverse" }}>
-        {renderRows()}
-      </View>
+      <ScrollView horizontal={true} snapToEnd={true} ref={scrollViewRef}>
+        <View style={{ flexDirection: "row-reverse", paddingBottom: 15 }}>
+          {renderRows()}
+        </View>
+      </ScrollView>
     </View>
   )
 
@@ -66,12 +77,12 @@ export default forwardRef(({ game }: any, ref) => {
                   width: 1
                 }}
               />}
-            <View style={{ paddingHorizontal: 25 }}>
+            <View style={{ paddingHorizontal: 25, alignItems: 'center' }}>
               {participants.map(participant => {
                 const rowData = data[participant.id];
                 return (
                   <View style={styles.rowItem} key={participant.id}>
-                    <Level level={rowData}/>
+                    <Level level={rowData} />
                   </View>
                 );
               })}

@@ -47,6 +47,7 @@ export default function Games({ navigation }: IGameProps) {
         <TouchableOpacity
           style={[ContainerStyle.shadowContainerLight, ContainerStyle.padding, styles.gameContainer]}
           onPress={() => navigation.navigate("game", { game })}
+          key={game.id}
         >
           <View>
             <Text style={[TextStyle.bold, TextStyle.h5, ColorStyle.textColorLight, {}]}>
