@@ -156,6 +156,14 @@ export default function NewGameRow({ route, navigation }: any) {
               </TouchableOpacity>
             )
           })}
+          <TouchableOpacity key="Joker"
+                onPress={() => setSelectedMen("joker")}
+                style={styles.menContainer}>
+                <Text style={TextStyle.bold}>J</Text>
+                {selectedMen === "joker"
+                  ? undefined :
+                  <View style={styles.friendOverlay}></View>}
+              </TouchableOpacity>
         </View>
       </View>
     )
@@ -258,6 +266,12 @@ export default function NewGameRow({ route, navigation }: any) {
       Alert.alert("请输入分数");
       return;
     }
+
+    if(!selectedMen){
+      Alert.alert("请选择花色");
+      return;
+    }
+
     if (!friendId) {
       Alert.alert("请选择朋友，如果是庄家自己打就选庄家自己 :)");
       return;
@@ -315,6 +329,7 @@ export default function NewGameRow({ route, navigation }: any) {
 
     gameRow.set("data", newData);
     gameRow.set("roundData", newRoundData);
+    gameRow.set("men", selectedMen);
 
     await gameRow.save();
     const relation = game.relation("row");
