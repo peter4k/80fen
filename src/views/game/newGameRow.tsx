@@ -3,10 +3,18 @@ import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TouchableWithou
 import { ContainerStyle, TextStyle, ColorStyle } from '../../style';
 import Timer from './timer';
 import FriendItem from '../components/friendItem';
-import { ThemeColors } from '../../constant/color';
+import { ThemeColors, BaseColors } from '../../constant/color';
 import GameRows from './gameRows';
 import Parse from 'parse/react-native';
 import Level from '../components/level';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const cardsMen = {
+  "spade": {name: "cards-spade", color: BaseColors.grey[800]},
+  "heart": {name: "cards-heart", color: BaseColors.red[500]},
+  "club": {name: "cards-club", color: BaseColors.grey[800]},
+  "diamond": {name: "cards-diamond", color: BaseColors.red[500]}
+}
 
 export default function NewGameRow({ route, navigation }: any) {
 
@@ -17,6 +25,7 @@ export default function NewGameRow({ route, navigation }: any) {
   const [count, setCount] = React.useState(0);
   const [reBanker, setReBanker] = React.useState(false);
   const [bankerId, setBankerId] = React.useState(game.get("bankerId"));
+  const [selectedMen, setSelectedMen] = React.useState(game.get("selectedMen"));
   const [friendId, setFriend] = React.useState("");
   const [nextBankerId, setNextBankerId] = React.useState("");
   const [score, setScore] = React.useState("0");
@@ -53,6 +62,7 @@ export default function NewGameRow({ route, navigation }: any) {
         {renderGetBankerSelect()}
         {reBanker ? renderSelectBanker() : undefined}
         {renderLevel()}
+        {renderSelectMen()}
         {renderSelectFriend()}
         <Text style={[TextStyle.sectionTitle]}>庄下分数</Text>
         <View style={[{ width: 100 }, ContainerStyle.shadowContainerLight, ContainerStyle.paddingSmall, ContainerStyle.backgroundWhite, ContainerStyle.roundedCorner]}>
@@ -125,6 +135,30 @@ export default function NewGameRow({ route, navigation }: any) {
         </View>
       </View>
     );
+  }
+
+  function renderSelectMen() {
+    return (
+      <View>
+        <Text style={[TextStyle.sectionTitle]}>选择花色</Text>
+        <View style={{ flexDirection: 'row' }}>
+          {Object.keys(cardsMen).map((key: string) => {
+            //@ts-ignore
+            const men = cardsMen[key];
+            return (
+              <TouchableOpacity key={key}
+                onPress={() => setSelectedMen(key)}
+                style={styles.menContainer}>
+                <MaterialCommunityIcons name={men.name} size={24} color={men.color} />
+                {selectedMen === key
+                  ? undefined :
+                  <View style={styles.friendOverlay}></View>}
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+      </View>
+    )
   }
 
   function renderSelectFriend() {
@@ -273,7 +307,7 @@ export default function NewGameRow({ route, navigation }: any) {
       if (levelUpPpl.includes(participant.id)) nextLevel += levelUp;
       if (nextLevel > 14) {
         nextLevel = nextLevel - 13;
-        nextRound ++;
+        nextRound++;
       }
       newData[participant.id] = nextLevel;
       newRoundData[participant.id] = nextRound;
@@ -306,5 +340,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: ThemeColors.greyExtraLight,
     opacity: 0.65
+  },
+  menContainer: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 5,
+    backgroundColor: BaseColors.grey[300]
   }
 })
